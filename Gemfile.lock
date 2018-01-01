@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    nmea_plus (1.0.20)
+      racc (~> 1.4, >= 1.0)
+    racc (1.4.14)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  nmea_plus
+
+BUNDLED WITH
+   1.15.1

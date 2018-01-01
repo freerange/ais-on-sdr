@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'csv'
+require 'nmea_plus'
+
+input_filename = ARGV[0]
+
+headers = %w(
+  message_type
+  repeat_indicator
+  source_mmsi
+  name
+  navigational_status_description
+  rate_of_turn
+  speed_over_ground
+  position_10m_accuracy?
+  longitude
+  latitude
+  course_over_ground
+  true_heading
+  time_stamp
+  special_manoeuvre
+  raim?
+)
+
+CSV.open("#{input_filename}.csv", 'wb', headers: headers, write_headers: true) do |csv|
+  File.open(input_filename) do |file|
+    decoder = NMEAPlus::SourceDecoder.new(file)
+    decoder.each_complete_message do |message|
+      if message.data_type == 'AIVDM'
+        csv << [
+          message.ais.message_type,
+          message.ais.repeat_indicator,
+          message.ais.source_mmsi,
+          message.ais.source_mmsi == 235014365 ? 'Red Falcon' : 'unrecognized',
+          message.ais.navigational_status_description,
+          message.ais.rate_of_turn,
+          message.ais.speed_over_ground,
+          message.ais.position_10m_accuracy?,
+          message.ais.longitude,
+          message.ais.latitude,
+          message.ais.course_over_ground,
+          message.ais.true_heading,
+          message.ais.time_stamp,
+          message.ais.special_manoeuvre,
+          message.ais.raim?,
+        ]
+      end
+    end
+  end
+end
